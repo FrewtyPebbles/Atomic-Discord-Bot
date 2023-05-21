@@ -75,7 +75,6 @@ class RequiresDB(commands.Cog):
         
         valid_reaction = False
         for rolereaction, role in role_msg["roles"]:
-            print(f"{str(reaction.emoji) == str(rolereaction)}")
             if str(reaction.emoji) == str(rolereaction):
                 Role = discord.utils.get(reaction.member.guild.roles, name=role)
                 await reaction.member.add_roles(Role)
@@ -84,6 +83,42 @@ class RequiresDB(commands.Cog):
         if not valid_reaction:
             Emoji:discord.Reaction = discord.utils.get(reaction.member.guild.emojis, id=reaction.emoji.id)
             Emoji.remove()
+
+    @commands.Cog.listener()
+    async def on_raw_reaction_remove(self, reaction:discord.RawReactionActionEvent):
+        guild = self.bot.get_guild(reaction.guild_id)
+        role_msg = await self.db.role_messages.find_one({
+            "gid":reaction.guild_id,
+            "channelid":reaction.channel_id,
+            "messageid":reaction.message_id
+        })
+
+        # Return if the message is not in the db
+        if role_msg == None:
+            return
+        
+        for rolereaction, role in role_msg["roles"]:
+            #print(f"{str(reaction.emoji) == str(rolereaction)}")
+            if str(reaction.emoji) == str(rolereaction):
+                Role:discord.Role = discord.utils.get(guild.roles, name=role)
+                user:discord.Member = await guild.fetch_member(reaction.user_id)
+                print(user)
+                await user.remove_roles(Role)
+
+
+    @commands.Cog.listener()
+    async def on_message_delete(self, message:discord.Message):
+        role_msg = await self.db.role_messages.find_one({
+            "gid":message.guild.id,
+            "channelid":message.channel.id,
+            "messageid":message.id
+        })
+        if role_msg != None:
+            await self.db.role_messages.delete_one({
+                "gid":message.guild.id,
+                "channelid":message.channel.id,
+                "messageid":message.id
+            })
 
     #END ROLES
 

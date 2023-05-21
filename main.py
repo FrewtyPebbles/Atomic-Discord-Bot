@@ -5,15 +5,16 @@ import discord
 from discord.utils import get as server_get
 from discord.ext import commands
 from dotenv import load_dotenv
-
+import logging
 
 #ATOMIC
 VER = "0.1.0"
 
 load_dotenv()
 
-intents = discord.Intents.default()
+intents = discord.Intents.all()
 intents.message_content = True
+handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 
 bot = commands.Bot(command_prefix = "!", intents=intents)
 
@@ -24,9 +25,9 @@ async def load_exts():
 
 async def main():
     await load_exts()
-    await bot.start(os.getenv("DISCORD_TOKEN"))
 
 asyncio.run(main())
+bot.run(os.getenv("DISCORD_TOKEN"), log_handler=handler)
 
 ##OLD CODE
 

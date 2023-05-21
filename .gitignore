@@ -3,3 +3,4 @@ songs/*.mp3
 venv/
 __pycache__/
 .env
+discord.log
