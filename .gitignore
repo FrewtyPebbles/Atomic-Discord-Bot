@@ -1,5 +1,6 @@
 .gitignore
 songs/*.mp3
+filechecking/*.mp3
 venv/
 __pycache__/
 .env

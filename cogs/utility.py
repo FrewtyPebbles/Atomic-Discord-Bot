@@ -1,11 +1,13 @@
 from discord.ext import commands
 import discord
 from discord.utils import get as server_get
+from BotClass import DBBot
 
 
 class Utility(commands.Cog):
-    def __init__(self, bot:commands.Bot):
+    def __init__(self, bot:DBBot):
         self.bot = bot
+        self.db = bot.db
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member:discord.Member, before:discord.VoiceState, after:discord.VoiceState):
