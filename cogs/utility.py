@@ -2,6 +2,7 @@ from discord.ext import commands
 import discord
 from discord.utils import get as server_get
 from BotClass import DBBot
+from discord import app_commands
 
 
 class Utility(commands.Cog):
@@ -38,14 +39,14 @@ class Utility(commands.Cog):
 
     
 
-    @commands.command()
-    async def resize(self, ctx:commands.Context, people):
-        vc = ctx.author.voice.channel
+    @app_commands.command(name="resize")
+    async def resize(self, interaction:discord.Interaction, people:app_commands.Range[int, 2, 1000]):
+        vc = interaction.user.voice.channel
         if vc:
             await vc.edit(user_limit=int(people))
-            await ctx.send(f"Resizing ***{vc.name}*** to *{people}*")
+            await interaction.response.send_message(f"Resizing ***{vc.name}*** to *{people}*")
         else:
-            await ctx.send("You do not appear to be in a voice channel.")
+            await interaction.response.send_message("You do not appear to be in a voice channel.")
 
 async def setup(client):
     await client.add_cog(Utility(client))
